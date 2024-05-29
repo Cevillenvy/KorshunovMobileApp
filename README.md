@@ -9,34 +9,34 @@
 [Официальный сайт](https://nodejs.org/en/download/package-manager)
 
 ### 2 - Установка Watchman
-Это инструмент для наблюдения за изменениями в файлах. Он рекомендуется, но не обязателен.
+Это инструмент для наблюдения за изменениями в файлах. Он рекомендуется, но не обязателен.\
 ```brew install watchman```
 
 ### 3 - Установка React Native CLI
-CLI инструмент для React Native.
+CLI инструмент для React Native.\
 ```npm install -g react-native-cli```
 
 ### 4 - Установка Android Studio
 [Официальный сайт](https://developer.android.com/studio)
 
 ### 5 - Установка JDK
-Не следует устанавливать JDK, который не поддерживает Gradle
-Узнать какие версии поддерживают Gradle можно здесь - [Gradle](https://docs.gradle.org/current/userguide/compatibility.html)
+Не следует устанавливать JDK, который не поддерживает Gradle\
+Узнать какие версии поддерживают Gradle можно здесь - [Gradle](https://docs.gradle.org/current/userguide/compatibility.html)\
 [Скачать JDK](https://www.oracle.com/java/technologies/downloads/#java21)
 
 ### 6 - Выбор версии Java
-Проверить какие версии Java установлены на вашем устройстве можно командой в терминале
-```/usr/libexec/java_home -V```
-Для того чтобы сменить версию Java на интересующую вас, необходимо в файле .zshrc (или в другом файле конфигурации командной оболочки, который вы пользуетесь) ввести
-```export JAVA_HOME=$(/usr/libexec/java_home -v 21.0.3)```
-!Это пример для версии Java  21.0.3!
-Не забудьте обновиться в терминале
-```source ~/.zshrc```
-И проверить версию Java
+Проверить какие версии Java установлены на вашем устройстве можно командой в терминале\
+```/usr/libexec/java_home -V```\
+Для того чтобы сменить версию Java на интересующую вас, необходимо в файле .zshrc (или в другом файле конфигурации командной оболочки, который вы пользуетесь) ввести\
+```export JAVA_HOME=$(/usr/libexec/java_home -v 21.0.3)```\
+!Это пример для версии Java  21.0.3!\
+Не забудьте обновиться в терминале\
+```source ~/.zshrc```\
+И проверить версию Java\
 ```java -version```
 
 ### 7 - Запуск проекта
-Далее запустите эмулятор Android или iOS в Android Studio и выполните следующие команды из директории с проектом
+Далее запустите эмулятор Android или iOS в Android Studio и выполните следующие команды из директории с проектом\
 (взято из стартовой README при инициализации проекта)
 
 #### Step 1: Start the Metro Server
