@@ -37,6 +37,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,  // Нижний отступ
     paddingLeft: 10,  // Внутренний отступ слева
     width: '80%',  // Ширина текстового поля
+    color: 'white', // Цвет текста
   },
 });
 
