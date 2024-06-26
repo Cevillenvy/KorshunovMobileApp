@@ -1,8 +1,9 @@
-import * as React from 'react';
-import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
-import { View, Text, Button, TextInput, FlatList, StyleSheet } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as React from 'react'; // Импортируем React для создания компонентов
+import { NavigationContainer } from '@react-navigation/native'; // Импортируем контейнер навигации
+import { createStackNavigator } from '@react-navigation/stack'; // Импортируем stack навигатор
+import { View, Text, Button, TextInput, FlatList, StyleSheet, Image } from 'react-native'; // Импортируем необходимые компоненты из React Native
+import AsyncStorage from '@react-native-async-storage/async-storage'; // Корректный импорт AsyncStorage
+import { Audio } from 'expo-av'; // Импортируем Audio из expo-av
 
 // Основной экран приложения (экран из Лабораторной работы №2)
 const HomeScreen = ({ navigation }) => {
@@ -11,14 +12,18 @@ const HomeScreen = ({ navigation }) => {
       <Text style={styles.title}>Welcome to{"\n"}Korshunov Mobile App</Text>
       <TextInput style={styles.input} placeholder="Enter your name" placeholderTextColor="gray" />
       <Button title="Press me" onPress={() => alert('Button pressed!')} />
+      {/* Используем View, т.к. компонент Button не имеет "style prop" */}
       <View style={styles.button}>
         <Button title="Go to Resource Management" onPress={() => navigation.navigate('ResourceManagement')} />
+      </View>
+      <View style={styles.button}>
+        <Button title="Go to Multimedia Screen" onPress={() => navigation.navigate('Multimedia')} />
       </View>
     </View>
   );
 };
 
-// Экран для управления ресурсами (экран из Лабораторной работы №3)
+// Экран для управления ресурсами
 const ResourceManagementScreen = () => {
   const [name, setName] = React.useState('');
   const [data, setData] = React.useState([]);
@@ -28,9 +33,7 @@ const ResourceManagementScreen = () => {
   React.useEffect(() => {
     fetch('https://jsonplaceholder.typicode.com/posts')
       .then(response => response.json())
-      .then(json => {
-        setData(json);
-      })
+      .then(json => setData(json))
       .catch(error => console.error(error));
   }, []);
 
@@ -88,6 +91,50 @@ const ResourceManagementScreen = () => {
   );
 };
 
+// Экран для работы с мультимедиа
+const MultimediaScreen = () => {
+
+    var Sound = require('react-native-sound');
+    Sound.setCategory('Playback');
+
+    var audio = new Sound('audio.mp3', Sound.MAIN_BUNDLE, (error) => {
+      if (error) {
+        console.log('failed to load the sound', error);
+        return;
+      }
+    });
+
+  function playSound() {
+      audio.play((success) => {
+      if (success) {
+        console.log('successfully finished playing');
+      } else {
+        console.log('playback failed due to audio decoding errors');
+      }
+      });
+  }
+
+  function stopSound() {
+    audio.pause()
+  }
+
+  return (
+    <View style={styles.container}>
+      <Text style={styles.title}>Multimedia Example</Text>
+      <Image
+        source={{ uri: 'https://www.dummyimage.co.uk/150x150/FFA30F/FFFFFF/A Perfect Circle - Passive/9' }}
+        style={styles.image}
+      />
+      <View style={styles.button}>
+        <Button title="Play Music" onPress={playSound} />
+      </View>
+      <View style={styles.button}>
+        <Button title="Pause Music" onPress={stopSound} />
+      </View>
+    </View>
+  );
+};
+
 // Создаем stack navigator
 const Stack = createStackNavigator();
 
@@ -98,6 +145,7 @@ const App = () => {
       <Stack.Navigator initialRouteName="Home">
         <Stack.Screen name="Home" component={HomeScreen} options={{ title: 'Home' }} />
         <Stack.Screen name="ResourceManagement" component={ResourceManagementScreen} options={{ title: 'Resource Management' }} />
+        <Stack.Screen name="Multimedia" component={MultimediaScreen} options={{ title: 'Multimedia' }} />
       </Stack.Navigator>
     </NavigationContainer>
   );
@@ -129,11 +177,15 @@ const styles = StyleSheet.create({
     padding: 10,
     borderBottomColor: 'gray',
     borderBottomWidth: 1,
-    color: 'white',
   },
   button: {
     marginTop: 10,
-  }
+  },
+  image: {
+    width: 150,
+    height: 150,
+    marginBottom: 20,
+  },
 });
 
 export default App;
