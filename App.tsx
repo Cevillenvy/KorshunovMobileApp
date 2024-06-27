@@ -4,6 +4,9 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import * as ImagePicker from 'react-native-image-picker';
+import Sound from 'react-native-sound';
+
+const Stack = createStackNavigator();
 
 // Основной экран приложения
 const HomeScreen = ({ navigation }) => {
@@ -48,12 +51,16 @@ const ToDoListScreen = () => {
   // Сохранение name в локальное хранилище
   const storeData = async () => {
     try {
+      if (name.trim() === '') {
+        alert('Please enter a valid name');
+        return;
+      }
       await AsyncStorage.setItem('name', name);
       setStoredName(name);
       alert('Data saved');
       setData(prevData => [
-        ...prevData,
-        { id: prevData.length + 1, title: name },
+        ...(prevData || []),
+        { id: (prevData || []).length + 1, title: name },
       ]);
     } catch (error) {
       console.error(error);
@@ -94,31 +101,47 @@ const ToDoListScreen = () => {
 
 // Экран для работы с мультимедиа
 const MultimediaScreen = () => {
-  var Sound = require('react-native-sound');
-  Sound.setCategory('Playback');
+  const [audio, setAudio] = useState(null);
 
-  var audio = new Sound('audio.mp3', Sound.MAIN_BUNDLE, (error) => {
-    if (error) {
-      console.log('failed to load the sound', error);
-      return;
-    }
-  });
+  useEffect(() => {
+    const initAudio = async () => {
+      const sound = new Sound('audio.mp3', Sound.MAIN_BUNDLE, (error) => {
+        if (error) {
+          console.log('failed to load the sound', error);
+          return;
+        }
+        setAudio(sound);
+      });
+    };
+
+    initAudio();
+
+    return () => {
+      if (audio) {
+        audio.release();
+      }
+    };
+  }, []);
 
   // Воспроизведение аудио
-  function playSound() {
-    audio.play((success) => {
-      if (success) {
-        console.log('successfully finished playing');
-      } else {
-        console.log('playback failed due to audio decoding errors');
-      }
-    });
-  }
+  const playSound = () => {
+    if (audio) {
+      audio.play((success) => {
+        if (success) {
+          console.log('successfully finished playing');
+        } else {
+          console.log('playback failed due to audio decoding errors');
+        }
+      });
+    }
+  };
 
   // Пауза аудио
-  function stopSound() {
-    audio.pause()
-  }
+  const stopSound = () => {
+    if (audio) {
+      audio.pause();
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -185,8 +208,6 @@ const CameraScreen = () => {
     </View>
   );
 };
-
-const Stack = createStackNavigator();
 
 const App = () => {
   return (
