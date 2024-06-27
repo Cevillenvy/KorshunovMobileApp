@@ -103,6 +103,7 @@ const ToDoListScreen = () => {
 const MultimediaScreen = () => {
   const [audio, setAudio] = useState(null);
 
+// Инициализация звукового файла с обработкой ошибок
   useEffect(() => {
     const initAudio = async () => {
       const sound = new Sound('audio.mp3', Sound.MAIN_BUNDLE, (error) => {
@@ -123,7 +124,7 @@ const MultimediaScreen = () => {
     };
   }, []);
 
-  // Воспроизведение аудио
+  // Воспроизведение аудио с проверкой на наличие объекта звука
   const playSound = () => {
     if (audio) {
       audio.play((success) => {
@@ -136,7 +137,7 @@ const MultimediaScreen = () => {
     }
   };
 
-  // Пауза аудио
+  // Пауза аудио с проверкой на наличие объекта звука
   const stopSound = () => {
     if (audio) {
       audio.pause();
