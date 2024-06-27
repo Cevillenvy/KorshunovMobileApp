@@ -1,11 +1,11 @@
-import * as React from 'react';
+import React, { useState, useEffect } from 'react';
+import { View, Text, Button, TextInput, FlatList, StyleSheet, Image, Vibration, Platform, Alert } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import { View, Text, Button, TextInput, FlatList, StyleSheet, Image } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Audio } from 'expo-av';
+import * as ImagePicker from 'react-native-image-picker';
 
-// Основной экран приложения (экран из Лабораторной работы №2)
+// Основной экран приложения
 const HomeScreen = ({ navigation }) => {
   return (
     <View style={styles.container}>
@@ -18,28 +18,34 @@ const HomeScreen = ({ navigation }) => {
       <View style={styles.button}>
         <Button title="Go to Multimedia Screen" onPress={() => navigation.navigate('Multimedia')} />
       </View>
+      <View style={styles.button}>
+        <Button title="Go to Vibration Screen" onPress={() => navigation.navigate('Vibration')} />
+      </View>
+      <View style={styles.button}>
+        <Button title="Go to Camera Screen" onPress={() => navigation.navigate('Camera')} />
+      </View>
     </View>
   );
 };
 
 // Экран для управления ресурсами
 const ToDoListScreen = () => {
-  const [name, setName] = React.useState('');
-  const [data, setData] = React.useState([]);
-  const [storedName, setStoredName] = React.useState('');
+  const [name, setName] = useState('');
+  const [data, setData] = useState([]);
+  const [storedName, setStoredName] = useState('');
 
-  React.useEffect(() => {
+  useEffect(() => {
     fetch('https://jsonplaceholder.typicode.com/posts')
       .then(response => response.json())
       .then(json => setData(json))
       .catch(error => console.error(error));
   }, []);
 
-  React.useEffect(() => {
+  useEffect(() => {
     retrieveData();
   }, []);
 
-// Сохранение name в локальное хранилище
+  // Сохранение name в локальное хранилище
   const storeData = async () => {
     try {
       await AsyncStorage.setItem('name', name);
@@ -131,6 +137,55 @@ const MultimediaScreen = () => {
   );
 };
 
+// Экран для вибрации
+const VibrationScreen = () => {
+  const handleVibration = () => {
+    if (Platform.OS === 'ios') {
+      Vibration.vibrate(1000);
+    } else {
+      Vibration.vibrate([500, 500, 500]);
+    }
+  };
+
+  return (
+    <View style={styles.container}>
+      <Text style={styles.title}>Vibration Example</Text>
+      <Button title="Vibrate" onPress={handleVibration} />
+    </View>
+  );
+};
+
+// Экран для работы с камерой
+const CameraScreen = () => {
+  const [imageUri, setImageUri] = useState(null);
+
+  const handleOpenCamera = () => {
+    const options = {
+      mediaType: 'photo',
+      includeBase64: false,
+      saveToPhotos: true,
+    };
+
+    ImagePicker.launchCamera(options, (response) => {
+      if (response.didCancel) {
+        Alert.alert('User cancelled image picker');
+      } else if (response.error) {
+        Alert.alert('ImagePicker Error: ', response.error);
+      } else {
+        setImageUri(response.uri);
+      }
+    });
+  };
+
+  return (
+    <View style={styles.container}>
+      <Text style={styles.title}>Camera Example</Text>
+      <Button title="Open Camera" onPress={handleOpenCamera} />
+      {imageUri && <Image source={{ uri: imageUri }} style={styles.image} />}
+    </View>
+  );
+};
+
 const Stack = createStackNavigator();
 
 const App = () => {
@@ -140,6 +195,8 @@ const App = () => {
         <Stack.Screen name="Home" component={HomeScreen} options={{ title: 'Home' }} />
         <Stack.Screen name="ToDoList" component={ToDoListScreen} options={{ title: 'ToDo List' }} />
         <Stack.Screen name="Multimedia" component={MultimediaScreen} options={{ title: 'Multimedia' }} />
+        <Stack.Screen name="Vibration" component={VibrationScreen} options={{ title: 'Vibration' }} />
+        <Stack.Screen name="Camera" component={CameraScreen} options={{ title: 'Camera' }} />
       </Stack.Navigator>
     </NavigationContainer>
   );
@@ -178,7 +235,7 @@ const styles = StyleSheet.create({
   image: {
     width: 150,
     height: 150,
-    marginBottom: 20,
+    marginTop: 20,
   },
 });
 
