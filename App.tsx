@@ -13,7 +13,7 @@ const HomeScreen = ({ navigation }) => {
       <TextInput style={styles.input} placeholder="Enter your name" placeholderTextColor="gray" />
       <Button title="Press me" onPress={() => alert('Button pressed!')} />
       <View style={styles.button}>
-        <Button title="Go to Resource Management" onPress={() => navigation.navigate('ResourceManagement')} />
+        <Button title="Go to ToDo List" onPress={() => navigation.navigate('ToDoList')} />
       </View>
       <View style={styles.button}>
         <Button title="Go to Multimedia Screen" onPress={() => navigation.navigate('Multimedia')} />
@@ -23,7 +23,7 @@ const HomeScreen = ({ navigation }) => {
 };
 
 // Экран для управления ресурсами
-const ResourceManagementScreen = () => {
+const ToDoListScreen = () => {
   const [name, setName] = React.useState('');
   const [data, setData] = React.useState([]);
   const [storedName, setStoredName] = React.useState('');
@@ -138,7 +138,7 @@ const App = () => {
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Home">
         <Stack.Screen name="Home" component={HomeScreen} options={{ title: 'Home' }} />
-        <Stack.Screen name="ResourceManagement" component={ResourceManagementScreen} options={{ title: 'ToDo List' }} />
+        <Stack.Screen name="ToDoList" component={ToDoListScreen} options={{ title: 'ToDo List' }} />
         <Stack.Screen name="Multimedia" component={MultimediaScreen} options={{ title: 'Multimedia' }} />
       </Stack.Navigator>
     </NavigationContainer>
