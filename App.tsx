@@ -1,9 +1,9 @@
-import * as React from 'react'; // Импортируем React для создания компонентов
-import { NavigationContainer } from '@react-navigation/native'; // Импортируем контейнер навигации
-import { createStackNavigator } from '@react-navigation/stack'; // Импортируем stack навигатор
-import { View, Text, Button, TextInput, FlatList, StyleSheet, Image } from 'react-native'; // Импортируем необходимые компоненты из React Native
-import AsyncStorage from '@react-native-async-storage/async-storage'; // Корректный импорт AsyncStorage
-import { Audio } from 'expo-av'; // Импортируем Audio из expo-av
+import * as React from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import { View, Text, Button, TextInput, FlatList, StyleSheet, Image } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Audio } from 'expo-av';
 
 // Основной экран приложения (экран из Лабораторной работы №2)
 const HomeScreen = ({ navigation }) => {
@@ -12,7 +12,6 @@ const HomeScreen = ({ navigation }) => {
       <Text style={styles.title}>Welcome to{"\n"}Korshunov Mobile App</Text>
       <TextInput style={styles.input} placeholder="Enter your name" placeholderTextColor="gray" />
       <Button title="Press me" onPress={() => alert('Button pressed!')} />
-      {/* Используем View, т.к. компонент Button не имеет "style prop" */}
       <View style={styles.button}>
         <Button title="Go to Resource Management" onPress={() => navigation.navigate('ResourceManagement')} />
       </View>
@@ -29,7 +28,6 @@ const ResourceManagementScreen = () => {
   const [data, setData] = React.useState([]);
   const [storedName, setStoredName] = React.useState('');
 
-  // Хук useEffect для получения данных из API при монтировании компонента
   React.useEffect(() => {
     fetch('https://jsonplaceholder.typicode.com/posts')
       .then(response => response.json())
@@ -37,19 +35,16 @@ const ResourceManagementScreen = () => {
       .catch(error => console.error(error));
   }, []);
 
-  // Хук useEffect для получения данных из локального хранилища при монтировании компонента
   React.useEffect(() => {
     retrieveData();
   }, []);
 
-  // Функция для сохранения имени в локальное хранилище
+// Сохранение name в локальное хранилище
   const storeData = async () => {
     try {
       await AsyncStorage.setItem('name', name);
       setStoredName(name);
       alert('Data saved');
-
-      // Обновление состояния data с добавлением нового имени
       setData(prevData => [
         ...prevData,
         { id: prevData.length + 1, title: name },
@@ -59,7 +54,6 @@ const ResourceManagementScreen = () => {
     }
   };
 
-  // Функция для получения имени из локального хранилища
   const retrieveData = async () => {
     try {
       const value = await AsyncStorage.getItem('name');
@@ -73,15 +67,16 @@ const ResourceManagementScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Resource Management Example</Text>
+      <Text style={styles.title}>ToDo List</Text>
       <TextInput
         style={styles.input}
-        placeholder="Enter your name"
+        placeholder="..."
+        placeholderTextColor="gray"
         value={name}
         onChangeText={setName}
       />
-      <Button title="Save Name" onPress={storeData} />
-      <Text style={styles.item}>Stored Name: {storedName}</Text>
+      <Button title="Add" onPress={storeData} />
+      <Text style={styles.item}>Stored action: {storedName}</Text>
       <FlatList
         data={data}
         keyExtractor={(item) => item.id.toString()}
@@ -93,27 +88,28 @@ const ResourceManagementScreen = () => {
 
 // Экран для работы с мультимедиа
 const MultimediaScreen = () => {
+  var Sound = require('react-native-sound');
+  Sound.setCategory('Playback');
 
-    var Sound = require('react-native-sound');
-    Sound.setCategory('Playback');
+  var audio = new Sound('audio.mp3', Sound.MAIN_BUNDLE, (error) => {
+    if (error) {
+      console.log('failed to load the sound', error);
+      return;
+    }
+  });
 
-    var audio = new Sound('audio.mp3', Sound.MAIN_BUNDLE, (error) => {
-      if (error) {
-        console.log('failed to load the sound', error);
-        return;
-      }
-    });
-
+  // Воспроизведение аудио
   function playSound() {
-      audio.play((success) => {
+    audio.play((success) => {
       if (success) {
         console.log('successfully finished playing');
       } else {
         console.log('playback failed due to audio decoding errors');
       }
-      });
+    });
   }
 
+  // Пауза аудио
   function stopSound() {
     audio.pause()
   }
@@ -135,23 +131,20 @@ const MultimediaScreen = () => {
   );
 };
 
-// Создаем stack navigator
 const Stack = createStackNavigator();
 
-// Основной компонент приложения, содержащий навигацию
 const App = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Home">
         <Stack.Screen name="Home" component={HomeScreen} options={{ title: 'Home' }} />
-        <Stack.Screen name="ResourceManagement" component={ResourceManagementScreen} options={{ title: 'Resource Management' }} />
+        <Stack.Screen name="ResourceManagement" component={ResourceManagementScreen} options={{ title: 'ToDo List' }} />
         <Stack.Screen name="Multimedia" component={MultimediaScreen} options={{ title: 'Multimedia' }} />
       </Stack.Navigator>
     </NavigationContainer>
   );
 };
 
-// Объект стилей для компонентов
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -177,6 +170,7 @@ const styles = StyleSheet.create({
     padding: 10,
     borderBottomColor: 'gray',
     borderBottomWidth: 1,
+    color: 'white',
   },
   button: {
     marginTop: 10,
